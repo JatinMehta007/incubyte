@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
 // Create sweet (admin only)
 router.post('/', authenticate, isAdmin, async (req, res) => {
   try {
-    const { name, description, price, quantity, category, emoji } = req.body
+    const { name, description, price, quantity, category, emoji, imageUrl } = req.body
 
     if (!name || price === undefined || quantity === undefined) {
       return res.status(400).json({ message: 'Name, price, and quantity are required' })
@@ -45,6 +45,7 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
       quantity: parseInt(quantity),
       category,
       emoji: emoji || '🍬',
+      imageUrl,
     })
 
     await sweet.save()
@@ -58,7 +59,7 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
 // Update sweet (admin only)
 router.put('/:id', authenticate, isAdmin, async (req, res) => {
   try {
-    const { name, description, price, quantity, category, emoji } = req.body
+    const { name, description, price, quantity, category, emoji, imageUrl } = req.body
 
     const updateData = {}
     if (name) updateData.name = name
@@ -67,6 +68,7 @@ router.put('/:id', authenticate, isAdmin, async (req, res) => {
     if (quantity !== undefined) updateData.quantity = parseInt(quantity)
     if (category !== undefined) updateData.category = category
     if (emoji) updateData.emoji = emoji
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl
 
     const sweet = await Sweet.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
