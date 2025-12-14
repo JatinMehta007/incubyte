@@ -168,22 +168,22 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50  py-2">
+        <p className="text-lg bg-[#a6d4e2] font-medium text-center mb-8 text-gray-800">
+        Freshness & Hygiene Assured | No Chemical Preservatives | Ultra Long Shelf Life
+        </p>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-          🍬 Available Sweets
-        </h1>
 
         {/* Search and Filter Section */}
         <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
           {/* Search Bar */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 max-w-md mx-auto">
             <input
               type="text"
               placeholder="Search sweets by name, description, or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -193,7 +193,7 @@ export default function Dashboard() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -226,7 +226,7 @@ export default function Dashboard() {
                   className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 flex flex-col"
                 >
                   {/* Sweet Image */}
-                  <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                  <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-blue-100 to-pink-100">
                     <img
                       src={imageUrl}
                       alt={sweet.name}
@@ -244,7 +244,7 @@ export default function Dashboard() {
                       }}
                     />
                     {/* Price Badge - More Prominent */}
-                    <div className="absolute bottom-3 right-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg px-4 py-2 shadow-xl border-2 border-white">
+                    <div className="absolute bottom-3 right-3 bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-lg px-4 py-2 shadow-xl border-2 border-white">
                       <div className="text-xs font-medium opacity-90">Price</div>
                       <span className="text-2xl font-bold">₹{sweet.price}</span>
                     </div>
@@ -316,7 +316,7 @@ export default function Dashboard() {
                             max={sweet.quantity}
                             value={quantities[sweetId] || 0}
                             onChange={(e) => handleQuantityInput(sweetId, e.target.value)}
-                            className="w-16 h-10 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold"
+                            className="w-16 h-10 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
                           />
         <button
                             onClick={() => handleQuantityChange(sweetId, 1)}
@@ -373,8 +373,8 @@ export default function Dashboard() {
                           sweet.quantity === 0
                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                             : purchasing === sweetId
-                            ? "bg-purple-400 text-white cursor-wait"
-                            : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-lg active:scale-95"
+                            ? "bg-blue-400 text-white cursor-wait"
+                            : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg active:scale-95"
                         }`}
                       >
                         {purchasing === sweetId
