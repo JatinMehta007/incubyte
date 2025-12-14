@@ -1,180 +1,396 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import SweetImage from "./abc"; 
-import { getSweetImageUrl } from "../lib/sweet"; 
+import { useCart } from "../context/CartContext";
+import { getSweetImageUrl } from "../lib/sweet";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const [sweets, setSweets] = useState([]);
   const [filteredSweets, setFilteredSweets] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [purchasing, setPurchasing] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(null);
+  const [quantities, setQuantities] = useState({}); // Track quantity for each sweet
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking user
+    if (authLoading) {
+      return;
+    }
+    
+    // Only redirect if auth has finished loading and user is not present
     if (!user) {
       navigate("/login");
       return;
-    } 
+    }
+    
     fetchSweets();
-  }, [user]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     filterSweets();
-  }, [searchTerm, categoryFilter, sweets]);
+  }, [searchTerm, selectedCategory, sweets]);
 
   const fetchSweets = async () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:3000/api/sweets");
       setSweets(res.data);
-      setFilteredSweets(res.data);
     } catch (err) {
-      setError("Failed to load sweets");
+      alert("Failed to load sweets");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const filterSweets = () => {
-    let data = sweets;
+    let filtered = [...sweets];
 
-    if (searchTerm) {
-      data = data.filter(
-        (s) =>
-          s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    // Filter by search term
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (sweet) =>
+          sweet.name.toLowerCase().includes(term) ||
+          (sweet.description && sweet.description.toLowerCase().includes(term)) ||
+          (sweet.category && sweet.category.toLowerCase().includes(term))
       );
     }
 
-    if (categoryFilter !== "all") {
-      data = data.filter((s) => s.category === categoryFilter);
+    // Filter by category
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(
+        (sweet) => sweet.category && sweet.category.toLowerCase() === selectedCategory.toLowerCase()
+      );
     }
 
-    setFilteredSweets(data);
+    setFilteredSweets(filtered);
   };
 
-  const handlePurchase = async (id) => {
+  const handlePurchase = async (sweetId) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      await axios.post(`http://localhost:3000/api/sweets/${id}/purchase`, {
+      setPurchasing(sweetId);
+      const res = await axios.post(`http://localhost:3000/api/sweets/${sweetId}/purchase`, {
         quantity: 1,
       });
+      
+      alert(`Purchase successful! ${res.data.message}`);
+      // Refresh sweets to update quantities
       fetchSweets();
-      alert("Purchase successful 🍬");
     } catch (err) {
-      alert("Purchase failed");
+      alert(err.response?.data?.message || "Purchase failed. Please try again.");
+      console.error(err);
+    } finally {
+      setPurchasing(null);
     }
   };
 
-  const categories = [
-    "all",
-    ...new Set(sweets.map((s) => s.category).filter(Boolean)),
-  ];
+  const handleQuantityChange = (sweetId, change) => {
+    setQuantities((prev) => {
+      const currentQty = prev[sweetId] || 0;
+      const sweet = sweets.find((s) => (s._id || s.id) === sweetId);
+      const maxQty = sweet ? sweet.quantity : 0;
+      
+      const newQty = Math.max(0, Math.min(maxQty, currentQty + change));
+      return { ...prev, [sweetId]: newQty };
+    });
+  };
 
-  if (loading) {
+  const handleQuantityInput = (sweetId, value) => {
+    const numValue = parseInt(value) || 0;
+    const sweet = sweets.find((s) => (s._id || s.id) === sweetId);
+    const maxQty = sweet ? sweet.quantity : 0;
+    
+    setQuantities((prev) => ({
+      ...prev,
+      [sweetId]: Math.max(0, Math.min(maxQty, numValue)),
+    }));
+  };
+
+  const handleAddToCart = (sweet) => {
+    if (sweet.quantity === 0) {
+      alert("This item is out of stock!");
+      return;
+    }
+    
+    const sweetId = sweet._id || sweet.id;
+    const qty = quantities[sweetId] || 0;
+    
+    if (qty === 0) {
+      alert("Please select a quantity greater than 0!");
+      return;
+    }
+    
+    setAddingToCart(sweetId);
+    addToCart(sweet, qty);
+    
+    // Reset quantity after adding
+    setQuantities((prev) => {
+      const newQuantities = { ...prev };
+      delete newQuantities[sweetId];
+      return newQuantities;
+    });
+    
+    // Show feedback
+    setTimeout(() => {
+      setAddingToCart(null);
+    }, 500);
+  };
+
+  // Get unique categories for filter
+  const categories = ["all", ...new Set(sweets.map((s) => s.category).filter(Boolean))];
+
+  // Show loading while auth is being checked or sweets are being fetched
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-xl">
-        🍬 Loading sweets...
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
       </div>
     );
   }
 
+  // If not authenticated (after loading), this will redirect, but show nothing while redirecting
+  if (!user) {
+    return null;
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
-      <h1 className="text-4xl font-bold mb-2">Sweets Store 🍭</h1>
-      <p className="text-gray-600 mb-6">
-        Discover delicious sweets
-      </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+          🍬 Available Sweets
+        </h1>
 
-      {/* Search & Filter */}
-      <div className="bg-white p-4 rounded-xl shadow mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          className="border rounded-lg px-4 py-2"
-          placeholder="Search sweets..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        {/* Search and Filter Section */}
+        <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
+          {/* Search Bar */}
+          <div className="flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="Search sweets by name, description, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            />
+          </div>
 
-        <select
-          className="border rounded-lg px-4 py-2"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          {categories.map((c) => (
-            <option key={c} value={c}>
-              {c.charAt(0).toUpperCase() + c.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      {/* Grid */}
-      {filteredSweets.length === 0 ? (
-        <div className="text-center text-xl">No sweets found 🍭</div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredSweets.map((sweet) => (
-            <div
-              key={sweet._id}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+          {/* Category Filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-gray-700 font-medium">Filter by:</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
             >
-              <SweetImage
-                src={sweet.imageUrl || getSweetImageUrl(sweet)}
-                alt={sweet.name}
-                emoji={sweet.emoji || "🍬"}
-                className="h-48"
-              />
-
-              <div className="p-5">
-                <h3 className="text-xl font-bold">{sweet.name}</h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {sweet.description || "Delicious sweet"}
-                </p>
-
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-purple-600 font-bold text-xl">
-                    ₹{sweet.price}
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      sweet.quantity > 0
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {sweet.quantity > 0
-                      ? `In Stock (${sweet.quantity})`
-                      : "Out of Stock"}
-                  </span>
-                </div>
-
-                <button
-                  disabled={sweet.quantity === 0}
-                  onClick={() => handlePurchase(sweet._id)}
-                  className={`w-full py-2 rounded-lg font-semibold ${
-                    sweet.quantity === 0
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-purple-600 text-white hover:bg-purple-700"
-                  }`}
-                >
-                  {sweet.quantity === 0 ? "Out of Stock" : "Purchase"}
-                </button>
-              </div>
-            </div>
-          ))}
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      )}
+
+        {/* Results Count */}
+        <div className="mb-6 text-gray-600">
+          Showing {filteredSweets.length} of {sweets.length} sweets
+        </div>
+
+        {/* Sweets Grid */}
+        {filteredSweets.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-xl text-gray-500">No sweets found matching your search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredSweets.map((sweet) => {
+              const imageUrl = sweet.imageUrl || getSweetImageUrl(sweet);
+              const sweetId = sweet._id || sweet.id;
+              
+              return (
+                <div
+                  key={sweetId}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 flex flex-col"
+                >
+                  {/* Sweet Image */}
+                  <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                    <img
+                      src={imageUrl}
+                      alt={sweet.name}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        // Fallback to emoji if image fails to load
+                        e.target.style.display = 'none';
+                        const parent = e.target.parentElement;
+                        if (parent && !parent.querySelector('.emoji-fallback')) {
+                          const emojiDiv = document.createElement('div');
+                          emojiDiv.className = 'emoji-fallback text-6xl flex items-center justify-center h-full';
+                          emojiDiv.textContent = sweet.emoji || "🍬";
+                          parent.appendChild(emojiDiv);
+                        }
+                      }}
+                    />
+                    {/* Price Badge - More Prominent */}
+                    <div className="absolute bottom-3 right-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg px-4 py-2 shadow-xl border-2 border-white">
+                      <div className="text-xs font-medium opacity-90">Price</div>
+                      <span className="text-2xl font-bold">₹{sweet.price}</span>
+                    </div>
+                    {/* Stock Badge */}
+                    {sweet.quantity === 0 && (
+                      <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        Out of Stock
+                      </div>
+                    )}
+                    {sweet.quantity > 0 && sweet.quantity < 10 && (
+                      <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        Only {sweet.quantity} left!
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sweet Details */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-xl font-bold text-gray-800 flex-1">{sweet.name}</h3>
+                      {sweet.category && (
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded ml-2 whitespace-nowrap">
+                          {sweet.category}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {sweet.description && (
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">
+                        {sweet.description}
+                      </p>
+                    )}
+
+                    {/* Stock Status */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Stock:</span>
+                        <span
+                          className={`font-semibold ${
+                            sweet.quantity > 0 ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {sweet.quantity > 0 ? `${sweet.quantity} available` : "Out of stock"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quantity Selector with +/- Buttons */}
+                    {sweet.quantity > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Quantity:
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleQuantityChange(sweetId, -1)}
+                            disabled={(quantities[sweetId] || 0) <= 0}
+                            className={`w-10 h-10 rounded-lg font-bold text-lg flex items-center justify-center transition-all ${
+                              (quantities[sweetId] || 0) <= 0
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 active:scale-95"
+                            }`}
+                          >
+                            −
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max={sweet.quantity}
+                            value={quantities[sweetId] || 0}
+                            onChange={(e) => handleQuantityInput(sweetId, e.target.value)}
+                            className="w-16 h-10 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold"
+                          />
+        <button
+                            onClick={() => handleQuantityChange(sweetId, 1)}
+                            disabled={(quantities[sweetId] || 0) >= sweet.quantity}
+                            className={`w-10 h-10 rounded-lg font-bold text-lg flex items-center justify-center transition-all ${
+                              (quantities[sweetId] || 0) >= sweet.quantity
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 active:scale-95"
+                            }`}
+                          >
+                            +
+        </button>
+      </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="space-y-2 mt-auto">
+                      {/* Add to Cart Button */}
+                  <button
+                        onClick={() => handleAddToCart(sweet)}
+                        disabled={sweet.quantity === 0 || (quantities[sweetId] || 0) === 0 || addingToCart === sweetId}
+                        className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                          sweet.quantity === 0 || (quantities[sweetId] || 0) === 0
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : addingToCart === sweetId
+                            ? "bg-green-400 text-white cursor-wait"
+                            : "bg-green-600 text-white hover:bg-green-700 hover:shadow-lg active:scale-95"
+                        }`}
+                      >
+                        {addingToCart === sweetId ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Add to Cart {(quantities[sweetId] || 0) > 0 && `(${(quantities[sweetId] || 0)})`}
+                          </>
+                        )}
+                  </button>
+
+                      {/* Purchase Button */}
+                  <button
+                        onClick={() => handlePurchase(sweetId)}
+                        disabled={sweet.quantity === 0 || purchasing === sweetId}
+                        className={`w-full py-2 rounded-lg font-semibold transition-all duration-200 text-sm ${
+                          sweet.quantity === 0
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : purchasing === sweetId
+                            ? "bg-purple-400 text-white cursor-wait"
+                            : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-lg active:scale-95"
+                        }`}
+                      >
+                        {purchasing === sweetId
+                          ? "Processing..."
+                          : sweet.quantity === 0
+                          ? "Out of Stock"
+                          : "Buy Now"}
+                  </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
