@@ -41,7 +41,7 @@ export default function Dashboard() {
   const fetchSweets = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/sweets");
+      const res = await axios.get(`${VITE_API_URL}/api/sweets`);
       setSweets(res.data);
     } catch (err) {
       alert("Failed to load sweets");
@@ -83,7 +83,7 @@ export default function Dashboard() {
 
     try {
       setPurchasing(sweetId);
-      const res = await axios.post(`http://localhost:3000/api/sweets/${sweetId}/purchase`, {
+      const res = await axios.post(`${VITE_API_URL}/api/sweets/${sweetId}/purchase`, {
         quantity: 1,
       });
       

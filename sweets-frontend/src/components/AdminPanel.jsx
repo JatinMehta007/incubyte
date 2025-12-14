@@ -36,7 +36,7 @@ export default function AdminPanel() {
   const fetchSweets = async () => {
     try {
       setLoading(true)
-      const response = await axios.get('http://localhost:3000/api/sweets')
+      const response = await axios.get(`${VITE_API_URL}/api/sweets`)
       setSweets(response.data)
     } catch (err) {
       setError('Failed to fetch sweets')
@@ -53,11 +53,11 @@ export default function AdminPanel() {
     try {
       if (editingSweet) {
         await axios.put(
-          `http://localhost:3000/api/sweets/${editingSweet._id || editingSweet.id}`,
+          `${VITE_API_URL}/api/sweets/${editingSweet._id || editingSweet.id}`,
           formData
         )
       } else {
-        await axios.post('http://localhost:3000/api/sweets', formData)
+        await axios.post(`${VITE_API_URL}/api/sweets`, formData)
       }
       resetForm()
       fetchSweets()
@@ -86,7 +86,7 @@ export default function AdminPanel() {
     }
 
     try {
-      await axios.delete(`http://localhost:3000/api/sweets/${sweetId}`)
+      await axios.delete(`${VITE_API_URL}/api/sweets/${sweetId}`)
       fetchSweets()
     } catch (err) {
       setError(err.response?.data?.message || 'Delete failed')
@@ -321,5 +321,4 @@ export default function AdminPanel() {
     </div>
   )
 }
-
 
