@@ -24,8 +24,8 @@ The application also includes an admin panel to manage sweets inventory.
 ## 📁 Project Structure
 
 incubyte/
-├─ sweets-frontend/   # React frontend
-└─ sweets-backend/    # Express backend
+ sweets-frontend/   # React frontend
+ sweets-backend/    # Express backend
 
 ---
 
