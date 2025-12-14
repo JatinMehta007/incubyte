@@ -31,7 +31,7 @@ incubyte/
 
 ## 🔧 Backend Setup & Management
 
-### 1️⃣ Navigate to backend directory
+### Navigate to backend directory
 ```bash
 cd sweets-backend
 
@@ -48,8 +48,10 @@ npm run dev
 node server.js
 
 http://localhost:3000
+```
 
-## 🎨 Frontend Setup
+### 🎨 Frontend Setup
+```bash
 
 cd sweets-frontend
 
@@ -60,3 +62,4 @@ VITE_API_URL=http://localhost:3000
 npm run dev
 
 http://localhost:5173
+```
