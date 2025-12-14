@@ -30,13 +30,13 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex bg-black items-center justify-center">
+    <div className="min-h-screen relative overflow-hidden flex bg-black items-center justify-center px-4 sm:px-6">
     <Spotlight
       className="absolute -top-40 left-0 md:-top-20 md:left-60 z-0 pointer-events-none"
       fill="white"
     />
   
-    <div className="relative z-10 max-w-md w-full space-y-8 bg-black border-zinc-500 border p-8 rounded-2xl">
+    <div className="relative z-10 max-w-md w-full space-y-6 sm:space-y-8 bg-black border-zinc-500 border p-6 sm:p-8 rounded-2xl">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Sign in to your account

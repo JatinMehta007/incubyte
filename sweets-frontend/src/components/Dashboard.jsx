@@ -168,32 +168,32 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50  py-2">
-        <p className="text-lg bg-[#a6d4e2] font-medium text-center mb-8 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 py-2 sm:py-4">
+        <p className="text-xs sm:text-sm md:text-base lg:text-lg bg-[#a6d4e2] font-medium text-center mb-4 sm:mb-6 md:mb-8 text-gray-800 px-2 sm:px-4">
         Freshness & Hygiene Assured | No Chemical Preservatives | Ultra Long Shelf Life
         </p>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
 
         {/* Search and Filter Section */}
-        <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
+        <div className="mb-6 sm:mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
           {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-auto">
+          <div className="flex-1 max-w-full md:max-w-md">
             <input
               type="text"
-              placeholder="Search sweets by name, description, or category..."
+              placeholder="Search sweets..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           {/* Category Filter */}
           <div className="flex items-center gap-2">
-            <label className="text-gray-700 font-medium">Filter by:</label>
+            <label className="text-gray-700 font-medium text-sm sm:text-base hidden sm:inline">Filter by:</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -205,7 +205,7 @@ export default function Dashboard() {
         </div>
 
         {/* Results Count */}
-        <div className="mb-6 text-gray-600">
+        <div className="mb-4 sm:mb-6 text-gray-600 text-sm sm:text-base">
           Showing {filteredSweets.length} of {sweets.length} sweets
         </div>
 
@@ -244,9 +244,9 @@ export default function Dashboard() {
                       }}
                     />
                     {/* Price Badge - More Prominent */}
-                    <div className="absolute bottom-3 right-3 bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-lg px-4 py-2 shadow-xl border-2 border-white">
-                      <div className="text-xs font-medium opacity-90">Price</div>
-                      <span className="text-2xl font-bold">₹{sweet.price}</span>
+                    <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-lg px-2 sm:px-3 md:px-4 py-1 sm:py-2 shadow-xl border-2 border-white">
+                      <div className="text-[10px] sm:text-xs font-medium opacity-90">Price</div>
+                      <span className="text-lg sm:text-xl md:text-2xl font-bold">₹{sweet.price}</span>
                     </div>
                     {/* Stock Badge */}
                     {sweet.quantity === 0 && (
@@ -262,25 +262,25 @@ export default function Dashboard() {
                   </div>
 
                   {/* Sweet Details */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-xl font-bold text-gray-800 flex-1">{sweet.name}</h3>
+                  <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
+                    <div className="flex items-start justify-between mb-2 gap-2">
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 flex-1">{sweet.name}</h3>
                       {sweet.category && (
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded ml-2 whitespace-nowrap">
+                        <span className="text-[10px] sm:text-xs text-gray-500 bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded ml-2 whitespace-nowrap flex-shrink-0">
                           {sweet.category}
                         </span>
                       )}
                     </div>
                     
                     {sweet.description && (
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">
+                      <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 flex-1">
                         {sweet.description}
                       </p>
                     )}
 
                     {/* Stock Status */}
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between text-sm">
+                    <div className="mb-3 sm:mb-4">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span className="text-gray-600">Stock:</span>
                         <span
                           className={`font-semibold ${
@@ -294,15 +294,15 @@ export default function Dashboard() {
 
                     {/* Quantity Selector with +/- Buttons */}
                     {sweet.quantity > 0 && (
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <div className="mb-3 sm:mb-4">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                           Quantity:
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
                           <button
                             onClick={() => handleQuantityChange(sweetId, -1)}
                             disabled={(quantities[sweetId] || 0) <= 0}
-                            className={`w-10 h-10 rounded-lg font-bold text-lg flex items-center justify-center transition-all ${
+                            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-bold text-base sm:text-lg flex items-center justify-center transition-all ${
                               (quantities[sweetId] || 0) <= 0
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300 active:scale-95"
@@ -316,30 +316,30 @@ export default function Dashboard() {
                             max={sweet.quantity}
                             value={quantities[sweetId] || 0}
                             onChange={(e) => handleQuantityInput(sweetId, e.target.value)}
-                            className="w-16 h-10 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
+                            className="w-12 sm:w-16 h-8 sm:h-10 text-center text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
                           />
-        <button
+                          <button
                             onClick={() => handleQuantityChange(sweetId, 1)}
                             disabled={(quantities[sweetId] || 0) >= sweet.quantity}
-                            className={`w-10 h-10 rounded-lg font-bold text-lg flex items-center justify-center transition-all ${
+                            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-bold text-base sm:text-lg flex items-center justify-center transition-all ${
                               (quantities[sweetId] || 0) >= sweet.quantity
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300 active:scale-95"
                             }`}
                           >
                             +
-        </button>
-      </div>
+                          </button>
+                        </div>
                       </div>
                     )}
 
                     {/* Action Buttons */}
                     <div className="space-y-2 mt-auto">
                       {/* Add to Cart Button */}
-                  <button
+                      <button
                         onClick={() => handleAddToCart(sweet)}
                         disabled={sweet.quantity === 0 || (quantities[sweetId] || 0) === 0 || addingToCart === sweetId}
-                        className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                        className={`w-full py-2 sm:py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 ${
                           sweet.quantity === 0 || (quantities[sweetId] || 0) === 0
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                             : addingToCart === sweetId
@@ -349,27 +349,30 @@ export default function Dashboard() {
                       >
                         {addingToCart === sweetId ? (
                           <>
-                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Adding...
+                            <span className="hidden sm:inline">Adding...</span>
+                            <span className="sm:hidden">...</span>
                           </>
                         ) : (
                           <>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            Add to Cart {(quantities[sweetId] || 0) > 0 && `(${(quantities[sweetId] || 0)})`}
+                            <span className="hidden sm:inline">Add to Cart</span>
+                            <span className="sm:hidden">Cart</span>
+                            {(quantities[sweetId] || 0) > 0 && <span className="hidden sm:inline">({(quantities[sweetId] || 0)})</span>}
                           </>
                         )}
-                  </button>
+                      </button>
 
                       {/* Purchase Button */}
-                  <button
+                      <button
                         onClick={() => handlePurchase(sweetId)}
                         disabled={sweet.quantity === 0 || purchasing === sweetId}
-                        className={`w-full py-2 rounded-lg font-semibold transition-all duration-200 text-sm ${
+                        className={`w-full py-1.5 sm:py-2 rounded-lg font-semibold transition-all duration-200 text-xs sm:text-sm ${
                           sweet.quantity === 0
                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                             : purchasing === sweetId
@@ -382,7 +385,7 @@ export default function Dashboard() {
                           : sweet.quantity === 0
                           ? "Out of Stock"
                           : "Buy Now"}
-                  </button>
+                      </button>
                     </div>
                   </div>
                 </div>

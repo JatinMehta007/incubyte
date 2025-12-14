@@ -43,66 +43,66 @@ export default function LandingPage() {
     },
   ];
   return (
-    <div className="w-[90%] mx-auto   justify-center items-center mt-[10%]">
-      <div className=" text-center space-y-8 ">
+    <div className="w-full sm:w-[95%] md:w-[90%] mx-auto justify-center items-center mt-8 sm:mt-12 md:mt-16 lg:mt-20 px-4 sm:px-6">
+      <div className="text-center space-y-4 sm:space-y-6 md:space-y-8">
         <EncryptedText
           text="Discover a wide variety of traditional and modern sweets, freshly prepared and available for instant purchase"
-          className={`text-4xl font-bold tracking-wider `}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold tracking-wider px-2`}
           revealDelayMs={50}
         ></EncryptedText>
         <br />
         <EncryptedText
           text="With Every Delicious Bite "
-          className={`text-4xl font-semibold text-blue-500 tracking-wider `}
+          className={`text-2xl sm:text-3xl md:text-4xl font-semibold text-blue-500 tracking-wider px-2`}
           revealDelayMs={50}
         ></EncryptedText>
-        <p className="text-xl">A modern twist on traditional flavors, served in a vibrant and welcoming setting.</p>
+        <p className="text-base sm:text-lg md:text-xl px-4">A modern twist on traditional flavors, served in a vibrant and welcoming setting.</p>
       </div>
       <div>
 
       {/* SECTION 1 — Signature Dishes */}
-      <div className="px-10 py-16 bg-[#a6d4e2] mt-40">
-        <h2 className="text-center block text-4xl font-medium mb-10">
+      <div className="px-4 sm:px-6 md:px-10 py-8 sm:py-12 md:py-16 bg-[#a6d4e2] mt-12 sm:mt-20 md:mt-32 lg:mt-40">
+        <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-medium mb-6 sm:mb-8 md:mb-10">
         Our Signature Rajasthani Dishes
         </h2>
-        <div className="flex justify-around items-center">
+        <div className="flex flex-col sm:flex-row justify-around items-center gap-6 sm:gap-4">
 
-        <DraggableCardContainer className=" items-center justify-center overflow-clip">
+        <DraggableCardContainer className="items-center justify-center overflow-clip w-full sm:w-auto">
       <DraggableCardBody>
         <img
           src="/ghevar.jpg"
-          alt="Some mountains"
-          className="pointer-events-none  relative h-80 w-full "
+          alt="Ghevar"
+          className="pointer-events-none relative h-48 sm:h-64 md:h-80 w-full object-cover"
           />
-        <p className="mt-4 text-center text-2xl font-medium ">
+        <p className="mt-4 text-center text-lg sm:text-xl md:text-2xl font-medium">
           Ghevar
         </p>
         
       </DraggableCardBody>
     </DraggableCardContainer>
 
-    <DraggableCardContainer className=" items-center justify-center overflow-clip">
+    <DraggableCardContainer className="items-center justify-center overflow-clip w-full sm:w-auto">
       <DraggableCardBody>
         <img
           src="/lmb.jpg"
-          alt="Some mountains"
-          className="pointer-events-none relative z-10 h-80 w-full "
+          alt="Gud Gajak"
+          className="pointer-events-none relative z-10 h-48 sm:h-64 md:h-80 w-full object-cover"
           />
-        <p className="mt-4 text-center text-2xl font-medium ">
+        <p className="mt-4 text-center text-lg sm:text-xl md:text-2xl font-medium">
           Gud Gajak
         </p>
         
       </DraggableCardBody>
     </DraggableCardContainer>
 
-    <DraggableCardContainer className=" items-center justify-center overflow-clip">
+    <DraggableCardContainer className="items-center justify-center overflow-clip w-full sm:w-auto">
       <DraggableCardBody>
         <img
           src="/phini.jpg"
-          alt="Some mountains"
-          className="pointer-events-none relative z-10 h-80 w-full "
+          alt="Dhoodh Phinni Meethi"
+          className="pointer-events-none relative z-10 h-48 sm:h-64 md:h-80 w-full object-cover"
           />
-        <p className="mt-4 text-center text-2xl font-medium ">
+        <p className="mt-4 text-center text-lg sm:text-xl md:text-2xl font-medium">
           Dhoodh Phinni Meethi
         </p>
         
@@ -113,29 +113,29 @@ export default function LandingPage() {
         </div>
         
         {/* SECTION 3 — Experience Banner */}
-<section className="py-20 bg-[#a6d4e2]  text-center">
-<h2 className="text-4xl font-medium">Experience the Rich Taste of Rajasthani Sweets</h2>
-<p className="mt-4 text-lg text-gray-700 max-w-2xl mx-auto">
+<section className="py-12 sm:py-16 md:py-20 bg-[#a6d4e2] text-center px-4 sm:px-6">
+<h2 className="text-2xl sm:text-3xl md:text-4xl font-medium px-4">Experience the Rich Taste of Rajasthani Sweets</h2>
+<p className="mt-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto px-4">
 Discover a wide variety of freshly prepared mithai, inspired by traditional recipes and delivered through a modern, seamless shopping experience.
 </p>
-<button onClick={() => navigate("/register")} className="mt-8 px-8 py-3 bg-blue-500 text-white  font-semibold shadow hover:bg-blue-600">
+<button onClick={() => navigate("/register")} className="mt-6 sm:mt-8 px-6 sm:px-8 py-2 sm:py-3 bg-blue-500 text-white text-sm sm:text-base font-semibold shadow hover:bg-blue-600 rounded-lg">
   Explore Menu
 </button>
 </section>
 
 
 {/* SECTION 4 — Customer Reviews */}
-<div className="py-16">
-<h2 className="text-center text-4xl font-bold mb-10">What Our Customers Say</h2>
+<div className="py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+<h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 md:mb-10">What Our Customers Say</h2>
 <AnimatedTestimonials testimonials={testimonials} />
 </div>
 
 {/* SECTION 5 — Footer */}
-<footer className="bg-[#a6d4e2] py-10 text-center">
-  <p className="font-medium">
+<footer className="bg-[#a6d4e2] py-6 sm:py-8 md:py-10 text-center px-4">
+  <p className="font-medium text-sm sm:text-base">
     © 2025 MithaiMart — All Rights Reserved
   </p>
-  <p className="text-gray-700 mt-2">
+  <p className="text-gray-700 mt-2 text-xs sm:text-sm">
     Crafted with tradition & sweetness in Rajasthan 
   </p>
 </footer>

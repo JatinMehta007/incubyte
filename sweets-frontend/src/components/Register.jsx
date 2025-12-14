@@ -31,8 +31,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-black p-8 rounded-2xl shadow-xl border border-zinc-600">
+    <div className="min-h-screen bg-black flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-black p-6 sm:p-8 rounded-2xl shadow-xl border border-zinc-600">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Create your account
