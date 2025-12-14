@@ -33,6 +33,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' })
 })
 
+app.get('/', (req, res) => {
+  res.send('Sweet Store Backend is running 🚀');
+});
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sweets-store')
